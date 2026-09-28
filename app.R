@@ -826,7 +826,7 @@ B_03_26_course_chr <- "ECON42550 Macroeconomics, University College Dublin"
 ###### B_03_27: Version ########################################################
 # Note: Semantic version, shown in the footer; CHANGELOG.md has the history.
 
-B_03_27_version_chr <- "1.0.2"
+B_03_27_version_chr <- "1.0.3"
 
 ###### B_03_28: Source Repository ##############################################
 # Note: The GitHub repo, linked from the footer.
@@ -1427,7 +1427,8 @@ E_02_05_sidebar_lst <- sidebar(
   conditionalPanel(
     "input.mode == 'project'",
     uiOutput("prj_explain")
-  )
+  ),
+  T_07_10b_sidebarqr_fn(B_04_02_qr_src_chr)
 )
 
 ###### E_02_06: Worked-Example Presets #########################################

@@ -866,6 +866,9 @@ T_07_06_css_chr <- "
   .stat-hint { font-size: 0.72rem; color: #6C757D; font-style: italic; }
   .side-qr { flex: 0 0 auto; }
   .side-qr img { width: 56px; height: 56px; display: block; }
+  .sidebar-qr { text-align: center; margin-top: 1rem; font-size: 0.8rem; }
+  .sidebar-qr img { width: 110px; height: 110px; }
+  .sidebar-qr-name { font-weight: 700; color: #04204C; margin-top: 0.3rem; }
   .bslib-page-title { display: flex; align-items: center; gap: 0.3rem;
     width: 100%; }
   .title-qr { margin-left: auto; }
@@ -1171,6 +1174,24 @@ T_07_10_sideqr_fn <- function(qr_src) {
                   shiny::tags$img(src = qr_src,
                                   alt = paste("QR code for",
                                               T_07_02_site_chr)))
+  )
+}
+
+###### T_07_10b: Sidebar QR Block #############################################
+# Note: The larger QR code at the foot of the sidebar, with the name and site
+#   address under it. The title bar carries the small one (T_07_10).
+
+T_07_10b_sidebarqr_fn <- function(qr_src) {
+  if (is.null(qr_src)) return(NULL)
+  shiny::tags$div(
+    class = "sidebar-qr",
+    shiny::tags$a(href = T_07_02_site_chr, target = "_blank",
+                  shiny::tags$img(src = qr_src,
+                                  alt = paste("QR code for",
+                                              T_07_02_site_chr))),
+    shiny::tags$div(class = "sidebar-qr-name", T_07_01_author_chr),
+    shiny::tags$div(shiny::tags$a(href = T_07_02_site_chr, target = "_blank",
+                                  sub("^https?://", "", T_07_02_site_chr)))
   )
 }
 

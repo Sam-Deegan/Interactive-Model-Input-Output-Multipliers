@@ -5,6 +5,12 @@ MAJOR for a change to the model or its notation, MINOR for new features
 (a stage, a worked example, a figure), PATCH for fixes and wording.
 Each release is tagged in git as `vX.Y.Z` and shown in the app footer.
 
+## [1.0.3] - 2026-09-28
+
+### App
+- The QR code returns to the foot of the sidebar, with the name and site
+  address, alongside the small one in the title bar.
+
 ## [1.0.2] - 2026-09-28
 
 ### App
