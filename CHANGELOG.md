@@ -5,6 +5,14 @@ MAJOR for a change to the model or its notation, MINOR for new features
 (a stage, a worked example, a figure), PATCH for fixes and wording.
 Each release is tagged in git as `vX.Y.Z` and shown in the app footer.
 
+## [1.0.2] - 2026-09-28
+
+### App
+- No figure carries a title or subtitle inside the image; the card header
+  and the caption under it name and explain the figure (CONVENTIONS.md 6).
+- Figures are drawn on a white ground, so the image sits flat in its card
+  instead of showing as a tinted tile.
+
 ## [1.0.1] - 2026-09-28
 
 ### App

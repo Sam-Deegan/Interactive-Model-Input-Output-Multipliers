@@ -93,7 +93,7 @@ T_01_04_ghost_alpha_num <- 0.5
 # Note: The theme function and the small formatters every app needs.
 
 ###### T_02_01: Plot Theme #####################################################
-# Note: The Dublin deck's figure look: wash ground, no border, navy titles,
+# Note: The Dublin deck's figure look: white ground, no border, navy titles,
 #   muted tick labels, legend along the bottom. grid is "h", "v" or "none".
 
 T_02_01_theme_fn <- function(base_size = T_01_03_base_size_int,
@@ -102,13 +102,13 @@ T_02_01_theme_fn <- function(base_size = T_01_03_base_size_int,
   ggplot2::theme_bw(base_size = base_size) +
     ggplot2::theme(
       panel.background   = ggplot2::element_rect(
-        fill = T_01_01_palette_vec[["wash"]], colour = NA),
+        fill = "white", colour = NA),
       plot.background    = ggplot2::element_rect(
-        fill = T_01_01_palette_vec[["wash"]], colour = NA),
+        fill = "white", colour = NA),
       legend.background  = ggplot2::element_rect(
-        fill = T_01_01_palette_vec[["wash"]], colour = NA),
+        fill = "white", colour = NA),
       legend.key         = ggplot2::element_rect(
-        fill = T_01_01_palette_vec[["wash"]], colour = NA),
+        fill = "white", colour = NA),
       panel.border       = ggplot2::element_blank(),
       panel.grid.minor   = ggplot2::element_blank(),
       panel.grid.major.x = if (grid == "v") {
@@ -131,7 +131,7 @@ T_02_01_theme_fn <- function(base_size = T_01_03_base_size_int,
       axis.ticks         = ggplot2::element_line(
         colour = T_01_01_palette_vec[["muted"]], linewidth = 0.4),
       strip.background   = ggplot2::element_rect(
-        fill = T_01_01_palette_vec[["wash"]], colour = NA),
+        fill = "white", colour = NA),
       strip.text         = ggplot2::element_text(
         colour = T_01_01_palette_vec[["navy"]], face = "bold", hjust = 0),
       # Title flush with the plot edge, not the panel
@@ -260,9 +260,9 @@ T_02_02_placeholder_fn <- function(text) {
     ggplot2::theme_void() +
     ggplot2::theme(
       panel.background = ggplot2::element_rect(
-        fill = T_01_01_palette_vec[["wash"]], colour = NA),
+        fill = "white", colour = NA),
       plot.background  = ggplot2::element_rect(
-        fill = T_01_01_palette_vec[["wash"]], colour = NA)
+        fill = "white", colour = NA)
     )
 }
 
