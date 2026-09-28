@@ -859,7 +859,8 @@ T_07_06_css_chr <- "
   .stat-tile, .stat-input input, .btn, .form-control, .form-select,
   .badge { border-radius: 0 !important; }
   .card, .bslib-card { border: none; box-shadow: none; }
-  .card-header { border-bottom: none; background: transparent; }
+  .card-header { border-bottom: none; background: transparent;
+    color: #0056A4; font-weight: 700; }
   .card-footer { border-top: none; background: transparent; }
   /* Headings take the body line height of 1.5; tighten them. */
   h1, h2, h3, h4, h5, h6,
