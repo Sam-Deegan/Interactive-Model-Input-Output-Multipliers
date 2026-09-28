@@ -188,13 +188,11 @@ B_03_03_measures_lst <- list(
     effect = "Extra gross output",
     help  = paste(
       "Total output across the economy from &euro;1 of extra final demand.",
-      "It",
-      "starts at 1 (the product itself) and adds what the supply chain, and",
-      "with Type II households, produce in response.",
-      "It is a <strong>gross</strong> measure: the same euro is counted at",
-      "every stage it passes through, so it is always larger than value",
-      "added and is <strong>not</strong> a contribution to GDP. Netting",
-      "that double-counting out is exactly what value added does."
+      "It starts at 1 (the product itself) and adds what the supply chain,",
+      "and with Type II households, produce in response. It is a gross",
+      "measure: the same euro is counted at every stage it passes through,",
+      "so it is always larger than value added and is not a contribution",
+      "to GDP. Value added nets that double-counting out."
     )
   ),
   gva = list(
@@ -247,14 +245,12 @@ B_03_03_measures_lst <- list(
     digits = 1,
     help   = paste(
       "Full-time-equivalent job-years supported per &euro;1 million: hours",
-      "worked &divide; 1,800. <strong>Not permanent jobs</strong>: 100 FTE",
+      "worked &divide; 1,800. These are not permanent jobs: 100 FTE",
       "job-years could be 100 full-time jobs for one year or 20 for five.",
-      "<strong>Not an extra benefit either</strong>: the pay these jobs",
-      "earn is already inside compensation of employees, and so already",
-      "inside gross value added and gross output. The job-years are the",
-      "employment embodied in that same output, not something on top of it.",
-      "Employment is by Eurostat industry, spread evenly over the CSO",
-      "products within it. Per &euro;1m at each year's prices."
+      "Nor are they an extra benefit: the pay these jobs earn is already",
+      "inside compensation of employees, and so inside gross value added",
+      "and gross output. Employment is by Eurostat industry, spread evenly",
+      "over the CSO products within it, per &euro;1m at each year's prices."
     )
   ),
   imports = list(
@@ -276,20 +272,19 @@ B_03_04_types_lst <- list(
   t1 = list(
     label = "Type I: Direct + Indirect",
     help  = paste(
-      "<strong>Direct</strong>: the spending itself.",
-      "<strong>Indirect</strong>: every round of suppliers, their",
-      "suppliers, and so on: L = (I &minus; A)<sup>&minus;1</sup>."
+      "The direct effect is the spending itself. The indirect effect is",
+      "every round of suppliers, their suppliers, and so on:",
+      "L = (I &minus; A)<sup>&minus;1</sup>."
     )
   ),
   t2 = list(
     label = "Type II: + Induced",
     help  = paste(
-      "Adds the <strong>induced</strong> effect: the people employed along",
-      "the chain spend their wages, which creates more demand. Households",
-      "are added to the table as one more sector, spending in the same",
-      "pattern as household consumption in the table. The wage bill is",
-      "taken <strong>gross</strong>: whatever is taxed away is assumed to",
-      "be spent again in the same pattern, so this is an upper bound on",
+      "Adds the induced effect: the people employed along the chain spend",
+      "their wages, which creates more demand. Households enter the table",
+      "as one more sector, spending in the pattern of household consumption",
+      "in the table. The wage bill is taken gross, so whatever is taxed",
+      "away is assumed to be spent again. This makes it an upper bound on",
       "the induced effect."
     )
   )
@@ -826,7 +821,7 @@ B_03_26_course_chr <- "ECON42550 Macroeconomics, University College Dublin"
 ###### B_03_27: Version ########################################################
 # Note: Semantic version, shown in the footer; CHANGELOG.md has the history.
 
-B_03_27_version_chr <- "1.0.6"
+B_03_27_version_chr <- "1.0.7"
 
 ###### B_03_28: Source Repository ##############################################
 # Note: The GitHub repo, linked from the footer.
@@ -2170,28 +2165,25 @@ F_01_01_app_server_fn <- function(input, output, session) {
       class = "narrative",
       HTML(paste0(
         "In ", input$year, ", an extra ", eur(size),
-        " of final demand for <strong>", name_now(), "</strong> raises ",
-        "output across the economy by <strong>", eur(out1), "</strong> ",
-        "(Type I): the ", eur(size), " <strong>direct</strong> effect plus ",
-        eur(out1 - size), " of <strong>indirect</strong> effects along the ",
-        "supply chain (", eur(sum(by$shk_first_amt)), " of it from direct ",
-        "suppliers). When the workers involved spend their wages, the ",
-        "<strong>induced</strong> effect adds ", eur(out2 - out1),
+        " of final demand for ", name_now(), " raises output across the ",
+        "economy by ", eur(out1), " (Type I): the ", eur(size),
+        " direct effect plus ", eur(out1 - size), " of indirect effects ",
+        "along the supply chain (", eur(sum(by$shk_first_amt)),
+        " of it from direct suppliers). When the workers involved spend ",
+        "their wages, the induced effect adds ", eur(out2 - out1),
         " (Type II total ", eur(out2), "). Of the Type I total, ",
         eur(tt$gva$t1), " is value added in Ireland, ",
         eur(tt$exchequer$t1), " comes back to the Exchequer in taxes and ",
-        eur(tt$imports$t1),
-        " leaks abroad as imports.",
+        eur(tt$imports$t1), " leaks abroad as imports.",
         if (has_jobs()) {
-          paste0(" It supports about <strong>", fte(tt$jobs$t1), " FTE ",
-                 "job-years</strong> (Type I; ", fte(tt$jobs$t2),
-                 " with Type II): full-time jobs for one year each, not ",
-                 "permanent jobs.")
+          paste0(" It supports about ", fte(tt$jobs$t1), " FTE job-years ",
+                 "(Type I; ", fte(tt$jobs$t2), " with Type II): full-time ",
+                 "jobs for one year each, not permanent jobs.")
         },
         if (!identical(input$measure, "output")) {
           ms <- input$measure
-          paste0(" The charts below read the same shock in <strong>",
-                 tolower(B_03_03_measures_lst[[ms]]$label), "</strong>: ",
+          paste0(" The charts below read the same shock in ",
+                 tolower(B_03_03_measures_lst[[ms]]$label), ": ",
                  amt(ms, tt[[ms]]$direct), " directly, ",
                  amt(ms, tt[[ms]]$t1), " with the supply chain (Type I) and ",
                  amt(ms, tt[[ms]]$t2), " once the induced effect is added ",
@@ -2652,7 +2644,7 @@ F_01_01_app_server_fn <- function(input, output, session) {
       class = "narrative",
       "The CSO groups products differently in each release, from 48",
       "products in 1998 to 62 in 2022. Left: filled points are",
-      tags$strong(name_now()), "itself; hollow points are the closest",
+      name_now(), "itself; hollow points are the closest",
       "product in years that group it differently",
       HTML(paste0(
         if (nrow(near) > 0) {
@@ -2783,10 +2775,9 @@ F_01_01_app_server_fn <- function(input, output, session) {
              "Irish inputs and repatriate profits, so their multipliers are",
              "low and GVA overstates Irish income."),
       tags$p(class = "eq-note",
-             tags$strong("T Households as Employers"),
-             "(paying a childminder or cleaner directly) has no inputs:",
-             "its whole output is wages, so its output and value-added",
-             "multipliers are exactly 1."),
+             "T Households as Employers (paying a childminder or cleaner",
+             "directly) has no inputs: its whole output is wages, so its",
+             "output and value-added multipliers are exactly 1."),
       tags$p(class = "eq-note",
              "Exchequer returns: taxes on products and on production come",
              "from the tables. Taxes on wages and profits use each year's",
@@ -2797,29 +2788,27 @@ F_01_01_app_server_fn <- function(input, output, session) {
              "rates suit spending that scales up the economy; the tax on a",
              "marginal extra euro can differ."),
       tags$p(class = "eq-note",
-             tags$strong("The induced effect spends gross wages:"),
-             "households are assumed to spend the whole wage bill, in the",
-             "same pattern as household consumption in the table (so part of",
-             "it leaks to imports and VAT), in the same year. No tax, no",
-             "saving and no delay. This is the standard Type II closure, and",
-             "the one in Sam's workbook. It is an upper bound: income tax,",
-             "USC and PRSI take about a third of wages, and households save",
-             "some of the rest. Read the other way round, it assumes the tax",
-             "is spent again too, though as if the government spent it the",
-             "way households do."),
+             "The induced effect spends gross wages. Households spend the",
+             "whole wage bill in the same year, in the pattern of household",
+             "consumption in the table, so part of it leaks to imports and",
+             "VAT. There is no tax, saving or delay. This is the standard",
+             "Type II closure and the one in Sam's workbook, and it is an",
+             "upper bound: income tax, USC and PRSI take about a third of",
+             "wages, and households save some of the rest. Read the other",
+             "way round, it assumes the tax is spent again too, as if the",
+             "government spent it the way households do."),
       tags$p(class = "eq-note",
-             tags$strong("Jobs are FTE job-years,"),
-             "not permanent jobs: hours worked (Eurostat nama_10_a64_e,",
-             "domestic concept) divided by 1,800 hours. A project supporting",
-             "100 FTE job-years might employ 100 people full time for a year,",
-             "or 20 for five years. Employment is published for about 60",
-             "industries, so jobs per euro of output are assumed the same for",
+             "Jobs are FTE job-years, not permanent jobs: hours worked",
+             "(Eurostat nama_10_a64_e, domestic concept) divided by 1,800.",
+             "A project supporting 100 FTE job-years might employ 100 people",
+             "full time for a year, or 20 for five years. Employment is",
+             "published for about 60 industries, so jobs per euro of output",
              HTML(paste(
-               "every CSO product within an industry. They are per &euro;1m",
-               "at each year's prices, so they fall over time with prices and",
-               "productivity. T Households as Employers has very little",
-               "recorded output for its employment, so its jobs multiplier is",
-               "an outlier."))),
+               "are taken as the same for every CSO product within an",
+               "industry. They are per &euro;1m at each year's prices, so",
+               "they fall over time with prices and productivity. T Households",
+               "as Employers has very little recorded output for its",
+               "employment, so its jobs multiplier is an outlier."))),
       tags$div(class = "nota-head", "Sources"),
       tags$ul(class = "eq-note", lapply(C_02_11_sources_vec, tags$li)),
       tags$p(class = "eq-note",

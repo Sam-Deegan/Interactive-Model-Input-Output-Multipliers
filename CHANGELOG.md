@@ -5,6 +5,12 @@ MAJOR for a change to the model or its notation, MINOR for new features
 (a stage, a worked example, a figure), PATCH for fixes and wording.
 Each release is tagged in git as `vX.Y.Z` and shown in the app footer.
 
+## [1.0.7] - 2026-09-28
+
+### App
+- The notes under the figures are rewritten as short plain prose: no bold
+  lead-in sentences, one point per paragraph.
+
 ## [1.0.6] - 2026-09-28
 
 ### App
