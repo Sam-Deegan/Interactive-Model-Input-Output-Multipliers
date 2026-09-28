@@ -826,7 +826,7 @@ B_03_26_course_chr <- "ECON42550 Macroeconomics, University College Dublin"
 ###### B_03_27: Version ########################################################
 # Note: Semantic version, shown in the footer; CHANGELOG.md has the history.
 
-B_03_27_version_chr <- "1.0.0"
+B_03_27_version_chr <- "1.0.1"
 
 ###### B_03_28: Source Repository ##############################################
 # Note: The GitHub repo, linked from the footer.
