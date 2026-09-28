@@ -852,6 +852,13 @@ T_07_05_theme_fn <- function() {
 #   headings, tab strips and the site nav. Only theme colours appear here.
 
 T_07_06_css_chr <- "
+  /* Cards and panels are square: they organise the page, not decorate it */
+  .card, .card-header, .card-body, .card-footer, .bslib-card,
+  .bslib-sidebar-layout, .navset-card-tab, .nav-tabs .nav-link,
+  .accordion-item, .accordion-button, .story, .prompt, .problem,
+  .stat-tile, .stat-input input, .btn, .form-control, .form-select,
+  .badge { border-radius: 0 !important; }
+  .card, .bslib-card { box-shadow: none; }
   /* Headings take the body line height of 1.5; tighten them. */
   h1, h2, h3, h4, h5, h6,
   .bslib-page-title, .card-header { line-height: 1.2; }

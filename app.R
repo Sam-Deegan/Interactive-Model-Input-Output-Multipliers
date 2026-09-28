@@ -826,7 +826,7 @@ B_03_26_course_chr <- "ECON42550 Macroeconomics, University College Dublin"
 ###### B_03_27: Version ########################################################
 # Note: Semantic version, shown in the footer; CHANGELOG.md has the history.
 
-B_03_27_version_chr <- "1.0.3"
+B_03_27_version_chr <- "1.0.4"
 
 ###### B_03_28: Source Repository ##############################################
 # Note: The GitHub repo, linked from the footer.
@@ -1133,6 +1133,13 @@ E_01_01_theme_lst <- bs_theme(
 #   navigation, figure headers, credits and the tab strips.
 
 E_01_02_css_chr <- "
+  /* Cards and panels are square: they organise the page, not decorate it */
+  .card, .card-header, .card-body, .card-footer, .bslib-card,
+  .bslib-sidebar-layout, .navset-card-tab, .nav-tabs .nav-link,
+  .accordion-item, .accordion-button, .story, .prompt, .problem,
+  .stat-tile, .stat-input input, .btn, .form-control, .form-select,
+  .badge { border-radius: 0 !important; }
+  .card, .bslib-card { box-shadow: none; }
   .stat-row { display: flex; flex-wrap: wrap; gap: 0.6rem; }
   .stat-tile { flex: 1 1 8rem; border-left: 5px solid #9FC4E0;
     border-radius: 4px; padding: 0.4rem 0.75rem; background: #F2F6F9; }

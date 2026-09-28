@@ -5,6 +5,12 @@ MAJOR for a change to the model or its notation, MINOR for new features
 (a stage, a worked example, a figure), PATCH for fixes and wording.
 Each release is tagged in git as `vX.Y.Z` and shown in the app footer.
 
+## [1.0.4] - 2026-09-28
+
+### App
+- Cards, panels, tiles and buttons are square with no shadow: they organise
+  the page rather than decorate it.
+
 ## [1.0.3] - 2026-09-28
 
 ### App
