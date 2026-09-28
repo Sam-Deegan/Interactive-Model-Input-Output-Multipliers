@@ -5,6 +5,12 @@ MAJOR for a change to the model or its notation, MINOR for new features
 (a stage, a worked example, a figure), PATCH for fixes and wording.
 Each release is tagged in git as `vX.Y.Z` and shown in the app footer.
 
+## [1.0.5] - 2026-09-28
+
+### App
+- Cards have no border or header rule: figures, equations and stories sit
+  on the page separated by whitespace alone.
+
 ## [1.0.4] - 2026-09-28
 
 ### App
