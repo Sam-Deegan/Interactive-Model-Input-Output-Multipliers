@@ -97,10 +97,13 @@ T_01_04_ghost_alpha_num <- 0.5
 #   muted tick labels, legend along the bottom. grid is "h", "v" or "none".
 
 T_02_01_theme_fn <- function(base_size = T_01_03_base_size_int,
-                             grid = c("h", "v", "none")) {
+                             grid = c("h", "v", "none"), ratio = 2 / 3) {
   grid <- match.arg(grid)
   ggplot2::theme_bw(base_size = base_size) +
     ggplot2::theme(
+      # Every figure is 3:2 whatever box it is drawn in (CONVENTIONS.md 6);
+      #   ratio = NULL lets a faceted or very tall figure set its own
+      aspect.ratio       = ratio,
       panel.background   = ggplot2::element_rect(
         fill = "white", colour = NA),
       plot.background    = ggplot2::element_rect(
@@ -134,13 +137,10 @@ T_02_01_theme_fn <- function(base_size = T_01_03_base_size_int,
         fill = "white", colour = NA),
       strip.text         = ggplot2::element_text(
         colour = T_01_01_palette_vec[["navy"]], face = "bold", hjust = 0),
-      # Title flush with the plot edge, not the panel
-      plot.title.position = "plot",
-      plot.title         = ggplot2::element_text(
-        colour = T_01_01_palette_vec[["navy"]], face = "bold", hjust = 0),
-      plot.subtitle      = ggplot2::element_text(
-        colour = T_01_01_palette_vec[["muted"]], size = ggplot2::rel(0.85)),
-      # Captions are drawn under the card by T_02_01c_draw_fn, not here
+      # Title, subtitle and caption are drawn on the page around the card
+      #   by T_02_01c_draw_fn, never inside the image (CONVENTIONS.md 6)
+      plot.title         = ggplot2::element_blank(),
+      plot.subtitle      = ggplot2::element_blank(),
       plot.caption       = ggplot2::element_blank(),
       # Axis titles at subtitle size, bold: "Inflation (pi[t])"
       axis.title         = ggplot2::element_text(
@@ -173,20 +173,27 @@ T_02_01b_fold_fn <- function(txt, width) {
 }
 
 ###### T_02_01c: Draw a Plot ###################################################
-# Note: The last step for every figure. Folds the title and moves the caption
-#   into the store in T_02_01d, keyed by output id, for T_07_07d_cap_fn.
+# Note: The last step for every figure. Lifts the title, subtitle and caption
+#   out of the plot into the store in T_02_01d, keyed by output id, so that
+#   T_07_07d_cap_fn can print them on the page: the title in the card
+#   header, the subtitle above the figure, the caption under it.
 
 T_02_01c_draw_fn <- function(p, cap_width = 95, title_width = 60) {
   if (!inherits(p, "ggplot")) return(p)
-  p$labels$title <- T_02_01b_fold_fn(p$labels$title, title_width)
-
-  cap <- p$labels$caption
-  id  <- tryCatch(shiny::getCurrentOutputInfo()$name, error = function(e) NULL)
+  txt_fn <- function(x) {
+    if (is.null(x) || !is.character(x) || !nzchar(x)) return("")
+    gsub("\n", " ", x)
+  }
+  id <- tryCatch(shiny::getCurrentOutputInfo()$name, error = function(e) NULL)
   if (!is.null(id)) {
     store <- T_02_01d_capstore_fn()
     if (!is.null(store)) {
-      store[[id]] <- if (is.null(cap) || !nzchar(cap)) "" else cap
-      p$labels$caption <- NULL
+      store[[id]] <- list(title    = txt_fn(p$labels$title),
+                          subtitle = txt_fn(p$labels$subtitle),
+                          cap      = txt_fn(p$labels$caption))
+      p$labels$title    <- NULL
+      p$labels$subtitle <- NULL
+      p$labels$caption  <- NULL
     }
   }
   p
@@ -987,7 +994,33 @@ T_07_06_css_chr <- "
   .fig-note { color: #6C757D; font-size: 0.82rem; line-height: 1.45;
     padding: 0.15rem 0.15rem 0 0.15rem; }
   .fig-note p { margin: 0; }
-  .fig-save { margin-left: auto; border: 1px solid #D8E0E6; background: #FFFFFF;
+  .fig-sub { color: #6C757D; font-size: 0.85rem; line-height: 1.4;
+    padding: 0 1rem; }
+  .fig-sub p { margin: 0 0 0.3rem; }
+  /* The plot box is 3:2 whatever its width; the fixed height is a fallback */
+  .fig-r32 { width: 100%; }
+  @supports (aspect-ratio: 3 / 2) {
+    .fig-r32 > .shiny-plot-output { height: auto !important;
+      aspect-ratio: 3 / 2; min-height: 0; overflow: hidden; }
+  }
+  /* The equations card: name and tabs on one line, no rule for a tab to cut */
+  .bslib-navs-card-title { display: flex; align-items: center; gap: 1rem;
+    flex-wrap: wrap; }
+  .bslib-navs-card-title .nav-tabs { border-bottom: none; margin: 0; }
+  .nav-tabs .nav-link { margin-bottom: 0; }
+  /* The stage name is the first tab: selected while the card is folded */
+  .eq-stage { padding: 0.5rem 1rem; cursor: pointer; font-weight: 600;
+    color: #0056A4; }
+  .eq-stage:hover { background: #F2F6F9; }
+  .eq-folded > .bslib-navs-card-title > .eq-stage { background: #0056A4;
+    color: #FFFFFF; font-weight: 700; }
+  .eq-folded > .tab-content { display: none; }
+  .eq-folded .nav-tabs .nav-link.active { background: transparent;
+    color: #6C757D; border-color: transparent; }
+  .eq-folded .nav-tabs .nav-link.active:hover { color: #0056A4;
+    background: #F2F6F9; }
+  .fig-save { margin-left: auto; flex: 0 0 auto; white-space: nowrap;
+    border: 1px solid #D8E0E6; background: #FFFFFF;
     color: #0056A4; font-size: 0.72rem; font-weight: 600; border-radius: 3px;
     padding: 0.1rem 0.5rem; cursor: pointer; line-height: 1.5;
     transition: background 0.2s ease, color 0.2s ease; }
@@ -1045,12 +1078,45 @@ T_07_07b_save_js_chr <- paste(
   sep = "\n"
 )
 
+###### T_07_07b2: Fold the Equations Card #####################################
+# Note: The equations card opens folded, so the figures sit high on the
+#   page, with the stage name drawn as the selected tab. Clicking a tab
+#   opens it; clicking the open tab again, or the stage name, folds it.
+
+T_07_07b2_eqfold_js_chr <- paste(
+  "document.addEventListener('DOMContentLoaded', function () {",
+  "  document.querySelectorAll('.card > .bslib-navs-card-title')",
+  "    .forEach(function (hdr) {",
+  "      var card = hdr.parentElement;",
+  "      card.classList.add('eq-folded');",
+  "      var name = hdr.querySelector(':scope > :not(.nav)');",
+  "      if (name) {",
+  "        name.classList.add('eq-stage');",
+  "        name.addEventListener('click', function () {",
+  "          card.classList.add('eq-folded');",
+  "        });",
+  "      }",
+  "      hdr.querySelectorAll('.nav-link').forEach(function (a) {",
+  "        a.addEventListener('click', function () {",
+  "          var open = !card.classList.contains('eq-folded');",
+  "          if (open && a.classList.contains('active')) {",
+  "            card.classList.add('eq-folded');",
+  "          } else {",
+  "            card.classList.remove('eq-folded');",
+  "          }",
+  "        }, true);",
+  "      });",
+  "    });",
+  "});",
+  sep = "\n"
+)
+
 ###### T_07_07c: Figure Card ###################################################
 # Note: A card holding one figure, with a Save PNG button in its header. Use
 #   in place of card(card_header(title), plotOutput(id, height)).
 
 T_07_07c_figcard_fn <- function(id, title, height, file = NULL) {
-  T_07_07e_add_fn(id)
+  T_07_07e_add_fn(id, title)
   stem <- if (is.null(file)) {
     gsub("(^-|-$)", "",
          gsub("-+", "-", gsub("[^a-z0-9]+", "-", tolower(title))))
@@ -1061,31 +1127,51 @@ T_07_07c_figcard_fn <- function(id, title, height, file = NULL) {
     bslib::card_header(
       shiny::tags$div(
         class = "fig-head",
-        shiny::tags$span(title),
+        shiny::uiOutput(paste0(id, "__ttl"), inline = TRUE),
         shiny::tags$button(type = "button", class = "fig-save",
                            `data-plot` = id, `data-name` = stem,
                            title = "Save this figure as a PNG",
                            "Save PNG")
       )
     ),
-    shiny::plotOutput(id, height = height),
+    shiny::uiOutput(paste0(id, "__sub"), class = "fig-sub"),
+    shiny::tags$div(class = "fig-r32",
+                    shiny::plotOutput(id, height = height)),
     shiny::uiOutput(paste0(id, "__cap"), class = "fig-note")
   )
 }
 
-###### T_07_07d: Wire Up the Lifted Captions ###################################
+###### T_07_07d: Wire Up the Lifted Labels ####################################
 # Note: Called once from the server. Defines, for every registered figure id,
-#   the output that prints the caption T_02_01c_draw_fn lifted out.
+#   the three outputs that print what T_02_01c_draw_fn lifted out: the title
+#   in the card header (the card's own name until the plot has drawn), the
+#   subtitle above the figure and the caption under it.
 
 T_07_07d_cap_fn <- function(output) {
   ids <- T_07_07e_ids_fn()
   for (id in ids) {
     local({
       this <- id
-      output[[paste0(this, "__cap")]] <- shiny::renderUI({
+      get_fn <- function(what) {
         store <- T_02_01d_capstore_fn()
-        txt   <- if (is.null(store)) NULL else store[[this]]
-        if (is.null(txt) || !nzchar(txt)) return(NULL)
+        lab   <- if (is.null(store)) NULL else store[[this]]
+        txt   <- if (is.list(lab)) lab[[what]] else NULL
+        if (is.null(txt) || !nzchar(txt)) NULL else txt
+      }
+      output[[paste0(this, "__ttl")]] <- shiny::renderUI({
+        txt <- get_fn("title")
+        if (is.null(txt)) txt <- T_07_07e_env$titles[[this]]
+        if (is.null(txt)) return(NULL)
+        shiny::tags$span(txt)
+      })
+      output[[paste0(this, "__sub")]] <- shiny::renderUI({
+        txt <- get_fn("subtitle")
+        if (is.null(txt)) return(NULL)
+        shiny::tags$p(txt)
+      })
+      output[[paste0(this, "__cap")]] <- shiny::renderUI({
+        txt <- get_fn("cap")
+        if (is.null(txt)) return(NULL)
         shiny::tags$p(txt)
       })
     })
@@ -1098,14 +1184,16 @@ T_07_07d_cap_fn <- function(output) {
 #   happens once when the app loads.
 
 T_07_07e_env <- new.env(parent = emptyenv())
-T_07_07e_env$ids <- character(0)
+T_07_07e_env$ids    <- character(0)
+T_07_07e_env$titles <- list()
 
 T_07_07e_ids_fn <- function() T_07_07e_env$ids
 
-T_07_07e_add_fn <- function(id) {
+T_07_07e_add_fn <- function(id, title = NULL) {
   if (!id %in% T_07_07e_env$ids) {
     T_07_07e_env$ids <- c(T_07_07e_env$ids, id)
   }
+  if (!is.null(title)) T_07_07e_env$titles[[id]] <- title
   invisible(NULL)
 }
 
@@ -1123,7 +1211,8 @@ T_07_08_head_fn <- function() {
     shiny::tags$style(shiny::HTML(T_07_06_css_chr)),
     shiny::tags$script(src = T_07_06b_mathjax_src_chr),
     shiny::tags$script(shiny::HTML(T_07_07_mathjax_js_chr)),
-    shiny::tags$script(shiny::HTML(T_07_07b_save_js_chr))
+    shiny::tags$script(shiny::HTML(T_07_07b_save_js_chr)),
+    shiny::tags$script(shiny::HTML(T_07_07b2_eqfold_js_chr))
   )
 }
 

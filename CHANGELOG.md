@@ -5,6 +5,19 @@ MAJOR for a change to the model or its notation, MINOR for new features
 (a stage, a worked example, a figure), PATCH for fixes and wording.
 Each release is tagged in git as `vX.Y.Z` and shown in the app footer.
 
+## [1.0.8] - 2026-09-28
+
+### App
+- Figure titles are back, on the page: each figure's title (with its
+  live numbers) is the card header and its subtitle sits above the image,
+  so the PNG itself stays bare for slides with their own captions.
+- The stage name and the Equations tabs sit on one line with no rule
+  under them. The card opens folded, with the stage name drawn as the
+  selected tab, so the worked examples and figures sit high on the page;
+  a tab opens it and the stage name folds it again.
+- Every figure box is 3:2 at any width, and the theme holds the image at
+  3:2 inside it.
+
 ## [1.0.7] - 2026-09-28
 
 ### App

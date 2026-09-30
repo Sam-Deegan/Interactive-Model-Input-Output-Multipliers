@@ -58,7 +58,8 @@ D_01_01_theme_fn <- function(base_size = B_03_09_base_size_int,
   grid <- match.arg(grid)
   pal  <- B_03_01_palette_vec
   T_02_01_theme_fn(base_size = base_size,
-                   grid = if (identical(grid, "h")) "h" else "none") +
+                   grid = if (identical(grid, "h")) "h" else "none",
+                   ratio = NULL) +
     theme(
       panel.grid.major.x = if (identical(grid, "v")) {
         element_line(colour = pal[["rule"]], linewidth = 0.3)
@@ -69,8 +70,6 @@ D_01_01_theme_fn <- function(base_size = B_03_09_base_size_int,
       legend.key.size    = grid::unit(0.9, "lines"),
       legend.box         = "vertical",
       legend.margin      = margin(0, 0, 0, 0),
-      plot.subtitle      = element_text(colour = pal[["muted"]],
-                                        size = rel(0.78)),
       plot.margin        = margin(6, 18, 6, 6)
     )
 }
@@ -297,6 +296,10 @@ D_02_01_mult_plot_fn <- function(df, measure, type, highlight,
     scale_linetype_manual(values = c(`Output-Weighted Average` = "dashed")) +
     x_sc +
     labs(x = D_01_10_mult_axis_fn(measure), y = NULL,
+         title = paste0(D_01_13_type_fn(type), " ", msr$label,
+                        " Multipliers", if (!is.null(year)) {
+                          paste0(", ", year, " Table")
+                        }),
          # Reading note: lifted out of the image by T_02_01c_draw_fn
          caption = paste(
            "Black tick: the net effect, which is the multiplier itself.",
@@ -356,6 +359,9 @@ D_02_02_split_plot_fn <- function(df, type, highlight, sort_by = "size",
     x_sc +
     labs(x = D_01_09_bold_fn("Share of each euro of final demand (%)"),
     y = NULL,
+    title = paste0("Where Each Euro of Final Demand Goes (",
+                   D_01_13_type_fn(type), ")",
+                   if (!is.null(year)) paste0(", ", year, " Table")),
     # Reading note: lifted out of the image by T_02_01c_draw_fn
     caption = paste(
       if (identical(type, "t2")) {
@@ -415,7 +421,11 @@ D_03_01_where_plot_fn <- function(out, type, top_n, title,
     geom_col(width = 0.72) +
     scale_fill_manual(values = fills, breaks = unname(src)) +
     x_sc +
-    labs(x = D_01_11_amount_axis_fn(measure), y = NULL) +
+    labs(x = D_01_11_amount_axis_fn(measure), y = NULL,
+         # Folded to the half-width card
+         title = D_01_04_wrap_fn(
+           paste0(title, " (", D_01_13_type_fn(type), ")",
+                  if (!is.null(year)) paste0(", ", year, " Table")), 50)) +
     D_01_01_theme_fn(grid = "v")
 }
 
@@ -491,6 +501,9 @@ D_03_02_rounds_plot_fn <- function(rounds, type, measure = "output",
     labs(x = D_01_09_bold_fn(
            "Term of the series, not a year: 0 is the spending itself"),
          y = D_01_11_amount_axis_fn(measure),
+         title = D_01_04_wrap_fn(
+           paste0("Round by Round: I + A + A^2 + ...",
+                  if (!is.null(year)) paste0(", ", year, " Table")), 50),
          caption = paste(
            "Rounds are the terms of (I - A)^-1 = I + A + A^2 + ..., not time",
            "periods. The input-output model is static: A is one year's",
@@ -551,6 +564,8 @@ D_04_01_heatmap_fn <- function(a_g, labels, highlight, year = NULL) {
     scale_x_discrete(position = "top") +
     labs(x = D_01_09_bold_fn("Buyer (column)"),
          y = D_01_09_bold_fn("Seller (row)"),
+         title = paste0("Technical Coefficients (A)",
+                        if (!is.null(year)) paste0(", ", year, " Table")),
          caption = paste(
            "Cell: cents of input from the row per euro of the column's",
            "output.",
@@ -598,7 +613,10 @@ D_04_02_suppliers_fn <- function(lt, labels, j, top_n, year = NULL) {
                                  `Value Added` = pal[["green"]],
                                  Taxes = pal[["tint"]])) +
     x_sc +
-    labs(x = D_01_09_bold_fn("Cents per euro of output"), y = NULL) +
+    labs(x = D_01_09_bold_fn("Cents per euro of output"), y = NULL,
+         title = D_01_04_wrap_fn(
+           paste0("Inputs per Euro of ", labels[j],
+                  if (!is.null(year)) paste0(", ", year, " Table")), 90)) +
     D_01_01_theme_fn(grid = "v")
 }
 
@@ -654,6 +672,10 @@ D_05_01_time_product_fn <- function(one, avg, name, measure, years,
     y_sc +
     labs(x = D_01_09_bold_fn("Year of the table"),
          y = D_01_10_mult_axis_fn(measure),
+         title = D_01_04_wrap_fn(
+           paste0(name, ": ", B_03_03_measures_lst[[measure]]$label,
+                  " Multiplier, ", min(yrs), " to ", max(yrs),
+                  " Tables"), 50),
          # Names the product a hollow marker stands in for, when known
          caption = paste(
            if (any(!one$exact) && !is.null(one$cso_short_str)) {
@@ -720,7 +742,11 @@ D_05_02_time_group_fn <- function(df, highlight, title, measure, ref = NULL) {
     scale_x_continuous(breaks = yrs) +
     y_sc +
     labs(x = D_01_09_bold_fn("Year of the table"),
-         y = D_01_10_mult_axis_fn(measure)) +
+         y = D_01_10_mult_axis_fn(measure),
+         title = D_01_04_wrap_fn(
+           paste0(title, ": ", B_03_03_measures_lst[[measure]]$label,
+                  " Multiplier, ", min(yrs), " to ", max(yrs),
+                  " Tables"), 50)) +
     D_01_01_theme_fn(grid = "h") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 }
@@ -758,6 +784,9 @@ D_06_01_project_plot_fn <- function(eff, type, year = NULL) {
     x_sc +
     labs(x = D_01_09_bold_fn("Effect of the project (euro million)"),
          y = NULL,
+         title = D_01_04_wrap_fn(
+           paste0("Effects of the Project (", D_01_13_type_fn(type), ")",
+                  if (!is.null(year)) paste0(", ", year, " Table")), 56),
          caption = paste(
            "The rows are nested, not additive. Gross value added is part of",
            "gross output, and compensation of employees and gross operating",
@@ -812,7 +841,10 @@ D_06_02_constraint_plot_fn <- function(con, year = NULL) {
     guides(fill = guide_legend(nrow = if (binds) 2 else 1, byrow = TRUE)) +
     x_sc +
     labs(x = D_01_09_bold_fn("Effect of the project (euro million)"),
-         y = NULL) +
+         y = NULL,
+         title = D_01_04_wrap_fn(
+           paste0("Effects with Supply Constraints",
+                  if (!is.null(year)) paste0(", ", year, " Table")), 56)) +
     D_01_01_theme_fn(grid = "v")
 }
 

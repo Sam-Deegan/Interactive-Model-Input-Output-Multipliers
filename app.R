@@ -821,7 +821,7 @@ B_03_26_course_chr <- "ECON42550 Macroeconomics, University College Dublin"
 ###### B_03_27: Version ########################################################
 # Note: Semantic version, shown in the footer; CHANGELOG.md has the history.
 
-B_03_27_version_chr <- "1.0.7"
+B_03_27_version_chr <- "1.0.8"
 
 ###### B_03_28: Source Repository ##############################################
 # Note: The GitHub repo, linked from the footer.
@@ -1224,7 +1224,8 @@ E_01_02_css_chr <- "
   .fig-head { display: flex; align-items: center; gap: 0.5rem;
     margin: 0 0 0.3rem 0; }
   .fig-name { font-weight: 600; color: #04204C; }
-  .fig-save { margin-left: auto; border: 1px solid #D8E0E6; background: #FFFFFF;
+  .fig-save { margin-left: auto; flex: 0 0 auto; white-space: nowrap;
+    border: 1px solid #D8E0E6; background: #FFFFFF;
     color: #0056A4; font-size: 0.72rem; font-weight: 600; border-radius: 3px;
     padding: 0.1rem 0.5rem; cursor: pointer; line-height: 1.5; }
   .fig-save:hover { background: #0056A4; color: #FFFFFF;
@@ -1341,18 +1342,20 @@ E_02_02_help_fn <- function(id) {
 #   is registered with the toolkit's figure register.
 
 E_02_03_figure_fn <- function(id, title, height) {
-  T_07_07e_add_fn(id)
+  T_07_07e_add_fn(id, title)
   stem <- gsub("(^-|-$)", "",
                gsub("-+", "-", gsub("[^a-z0-9]+", "-", tolower(title))))
   tags$div(
     class = "fig-wrap",
     tags$div(
       class = "fig-head",
-      tags$span(class = "fig-name", title),
+      tags$span(class = "fig-name",
+                uiOutput(paste0(id, "__ttl"), inline = TRUE)),
       tags$button(type = "button", class = "fig-save", `data-plot` = id,
                   `data-name` = stem, title = "Save this figure as a PNG",
                   "Save PNG")
     ),
+    uiOutput(paste0(id, "__sub"), class = "fig-sub"),
     plotOutput(id, height = height),
     uiOutput(paste0(id, "__cap"), class = "fig-note")
   )
@@ -1360,14 +1363,10 @@ E_02_03_figure_fn <- function(id, title, height) {
 
 ###### E_02_04: Draw a Figure ##################################################
 # Note: The last step out of every renderPlot: T_02_01c_draw_fn lifts the
-#   caption into the store for E_02_03's note slot. The title is put back
-#   as the builder folded it, to the width of its own card.
+#   title, subtitle and caption into the store for E_02_03's slots.
 
 E_02_04_draw_fn <- function(p) {
-  ttl <- p$labels$title
-  p   <- T_02_01c_draw_fn(p)
-  p$labels$title <- ttl
-  p
+  T_02_01c_draw_fn(p)
 }
 
 ###### E_02_05: Sidebar Controls ###############################################
